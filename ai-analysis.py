@@ -5,7 +5,7 @@ import os
 import json
 
 # Configuration
-genai.configure(api_key="AIzaSyDZ30bV4y6FZQFc6b9ki0eB-z0H_ON7LSQ")
+genai.configure(api_key="[REDACTED]") # Please contact Andrey for the API key
 model = genai.GenerativeModel('gemini-1.5-flash')
 
 def analyze_return(image_path, user_comment, user_score, days_since_purchase, order_description, harsh_mode=False):
