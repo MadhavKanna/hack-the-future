@@ -4,8 +4,13 @@ import argparse
 import os
 import json
 
+# Retrieve API key from environment variable
+api_key = os.getenv("GOOGLE_API_KEY") # please contact Andrey for the API key
+if not api_key:
+    raise ValueError("API key not found. Please set the GOOGLE_API_KEY in the .env file.")
+
 # Configuration
-genai.configure(api_key="[REDACTED]") # Please contact Andrey for the API key
+genai.configure(api_key=api_key)
 model = genai.GenerativeModel('gemini-1.5-flash')
 
 def analyze_return(image_path, user_comment, user_score, days_since_purchase, order_description, harsh_mode=False):
@@ -19,12 +24,15 @@ def analyze_return(image_path, user_comment, user_score, days_since_purchase, or
         1. ITEM CONDITION (from image):
         - Grade options: Brand New, Good, Acceptable, Poor
         - Describe specific flaws/features justifying the grade
-        - If Brand New: Consider full refund if no resell preparation needed
+        - Specify any damage detected and tag severity: no damage, minor defect, repairable defect, critical failure
+        - If the item is Brand New and recently returned (within 30 days), strongly consider a full refund unless there are clear signs of misuse or fraud.
 
         2. ORDER DESCRIPTION: "{order_description}"
         - Verify returned item matches the order:
           * Check for consistency in item type, brand, and features
           * Flag discrepancies (e.g., wrong item, mismatched description)
+        - If any of: damaged upon arrival, minor but believable description errors (such as shade similarity - pink and magenta), or size errors are mentioned, or otherwise honest mistakes that amount to the customer not wanting the item anymore, use your best judgment on whether or not to flag that as suspicious.  
+        - However, major discrepancies, such as the item being more than 80% dissimilar, are still suspicious. 
 
         3. AI CONFIDENCE:
         - If uncertain about condition (e.g., blurry image, ambiguous damage), confidence <70%
@@ -38,14 +46,11 @@ def analyze_return(image_path, user_comment, user_score, days_since_purchase, or
         - Assign fraud_risk: low/medium/high
 
         5. USER SCORE: {user_score}/100
-        - Refund if ≥80
-        - Store credit if 50-79
-        - Reject if <50
+        - Consider the user's trust score when making the final decision, but do not let it override clear evidence of the item's condition or fraud risk.
 
         6. RETURN TIMING: {days_since_purchase} days since purchase
-        - Refund if ≤30 days
-        - Credit if 31-45 days
-        - Reject if >45 days
+        - If the item is Brand New and returned within 30 days, prioritize a full refund unless there are clear issues.
+        - For older returns, consider store credit or rejection based on the item's condition and fraud risk.
 
         7. AI LENIENCY MODE: {'HARSH' if harsh_mode else 'STANDARD'}
         - Harsh: Downgrade condition by one grade
@@ -57,10 +62,15 @@ def analyze_return(image_path, user_comment, user_score, days_since_purchase, or
         - If return is rejected: -5 points
         - If return is fraudulent: -20 points
 
+        9. RESALE AD (if rejected for full refund):
+        - Generate a resale ad for platforms like Facebook Marketplace or Kijiji
+        - Include believable pricing, a description of the item, condition description, and expected time to sell
+
         OUTPUT AS JSON. INCLUDE ALL FIELDS EVEN IF EMPTY:
         {{
             "condition_grade": "...",
             "condition_reasoning": "...",
+            "damage_severity": "no damage/minor defect/repairable defect/critical failure",
             "order_consistency": "consistent/inconsistent",
             "order_discrepancies": ["list", "of", "mismatches"],
             "ai_confidence": "high/medium/low",
@@ -76,7 +86,8 @@ def analyze_return(image_path, user_comment, user_score, days_since_purchase, or
             "item_disposition": "resell/refurbish/salvage/landfill",
             "user_score_adjustment": "+X/-X points",
             "new_user_score": "updated score",
-            "decision_reasoning": "..."
+            "decision_reasoning": "...",
+            "resale_ad": "Generated ad text (if applicable)"
         }}"""
 
         response = model.generate_content([prompt, img])
@@ -104,12 +115,59 @@ def analyze_return(image_path, user_comment, user_score, days_since_purchase, or
                 result["user_score_adjustment"] = "-5 points"
                 result["new_user_score"] = max(user_score - 5, 0)
 
+        # Generate resale ad if item is rejected for full refund
+        if result["final_decision"] in ["credit", "reject"]:
+            resale_ad = generate_resale_ad(result, order_description)
+            result["resale_ad"] = resale_ad
+
         return result
 
     except json.JSONDecodeError:
         return {"error": "Failed to parse AI response as JSON. Ensure the prompt is correctly structured."}
     except Exception as e:
         return {"error": str(e)}
+
+def generate_resale_ad(result, order_description):
+    """Generate a resale ad for rejected items"""
+    condition = result.get("condition_grade", "Acceptable").lower()
+    damage_severity = result.get("damage_severity", "no damage")
+    price = 0
+
+    # Set price based on condition and damage severity
+    if condition == "brand new" and damage_severity == "no damage":
+        price = 80  # 80% of original price
+    elif condition == "good":
+        if damage_severity == "no damage":
+            price = 70
+        elif damage_severity == "minor defect":
+            price = 60
+        elif damage_severity == "repairable defect":
+            price = 50
+    elif condition == "acceptable":
+        if damage_severity == "no damage":
+            price = 50
+        elif damage_severity == "minor defect":
+            price = 40
+        elif damage_severity == "repairable defect":
+            price = 30
+    elif condition == "poor":
+        if damage_severity == "repairable defect":
+            price = 20
+        elif damage_severity == "critical failure":
+            price = 10
+
+    # Generate ad text
+    ad_text = f"""
+    FOR SALE: {order_description}
+    Condition: {condition.capitalize()}
+    Damage Severity: {damage_severity.capitalize()}
+    Price: ${price} (Negotiable)
+    Description: This item is in {condition} condition with {damage_severity}. It is perfect for someone looking for a great deal!
+    Expected Time to Sell: 1-2 weeks
+    Contact for more details or to make an offer!
+    """
+
+    return ad_text.strip()
 
 def main():
     parser = argparse.ArgumentParser(description="AI Return Processing System")
