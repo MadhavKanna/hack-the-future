@@ -143,7 +143,7 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
       case "refund":
         return "text-green-600"
       case "credit":
-        return "text-amber-500"
+        return "text-[#f90]"
       case "reject":
         return "text-red-600"
       default:
@@ -166,7 +166,7 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
           <button
             onClick={analyzeReturn}
             disabled={loading || !item || !comments || comments.trim().length === 0}
-            className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="px-3 py-1 text-sm bg-[#f90] text-white rounded-md hover:bg-[#f0ad4e] disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="flex items-center">
@@ -194,7 +194,7 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
 
       {loading && (
         <div className="text-center py-8">
-          <Loader2 className="h-8 w-8 mx-auto animate-spin text-green-600 mb-4" />
+          <Loader2 className="h-8 w-8 mx-auto animate-spin text-[#f90] mb-4" />
           <p className="text-gray-600">Analyzing your return request...</p>
           <p className="text-sm text-gray-500 mt-2">This may take a moment</p>
         </div>
@@ -203,17 +203,17 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
       {result && (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-3 rounded-md">
+            <div className="bg-[#f3f3f3] p-3 rounded-md">
               <p className="text-xs text-gray-500 mb-1">Condition</p>
               <p className="font-medium">{result.condition_grade}</p>
             </div>
-            <div className="bg-gray-50 p-3 rounded-md">
+            <div className="bg-[#f3f3f3] p-3 rounded-md">
               <p className="text-xs text-gray-500 mb-1">Damage Severity</p>
               <p className="font-medium">{result.damage_severity}</p>
             </div>
           </div>
 
-          <div className="bg-gray-50 p-3 rounded-md">
+          <div className="bg-[#f3f3f3] p-3 rounded-md">
             <p className="text-xs text-gray-500 mb-1">Comment Analysis</p>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div>
@@ -237,7 +237,7 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
             )}
           </div>
 
-          <div className="bg-gray-50 p-3 rounded-md">
+          <div className="bg-[#f3f3f3] p-3 rounded-md">
             <p className="text-xs text-gray-500 mb-1">Decision</p>
             <p className={`font-medium ${getDecisionColor(result.final_decision)}`}>
               {result.final_decision === "refund" && "Full Refund Approved"}
@@ -247,7 +247,7 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
             <p className="text-sm mt-1">{result.decision_reasoning}</p>
           </div>
 
-          <div className="bg-gray-50 p-3 rounded-md">
+          <div className="bg-[#f3f3f3] p-3 rounded-md">
             <p className="text-xs text-gray-500 mb-1">Score Impact</p>
             <div className="flex items-center">
               <p className={`font-medium ${getScoreAdjustmentColor(result.user_score_adjustment)}`}>
@@ -262,4 +262,5 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
     </div>
   )
 }
+
 
