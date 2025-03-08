@@ -105,14 +105,14 @@ export function SocialCreditGauge({ score = 75 }: SocialCreditGaugeProps) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
       <div className="text-center mb-2">
-        <h3 className="text-lg font-medium">Social Credit Score</h3>
+        <h3 className="text-lg font-medium">Buyer Score</h3>
         <p className={`text-3xl font-bold mt-1 ${getScoreColor()}`}>75</p>
       </div>
       <div className="relative w-full h-32">
         <canvas ref={canvasRef} className="w-full h-full"></canvas>
       </div>
       <div className="text-xs text-gray-500 text-center mt-2">
-        Your social credit score affects your return privileges
+        A higher score means quicker, easier returns!
       </div>
     </div>
   )
