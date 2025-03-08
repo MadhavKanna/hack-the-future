@@ -7,9 +7,9 @@ import { OrderCard } from "./order-card"
 const orders = [
   {
     id: "1045-F1",
-    date: "January 8, 2025",
+    date: "March 4, 2025",
     status: "Fulfilled",
-    total: "$229.98",
+    total: "$129.98",
     items: [
       {
         id: 1,
@@ -61,7 +61,7 @@ const orders = [
   },
   {
     id: "1047-F3",
-    date: "March 4, 2025",
+    date: "January 8, 2025",
     status: "Fulfilled",
     total: "$349.99",
     items: [
@@ -103,4 +103,5 @@ export function OrdersList() {
     </div>
   )
 }
+
 

@@ -17,9 +17,9 @@ interface ReturnItemsProps {
 
 // Updated order dates for 2025
 const orderDates: Record<string, string> = {
-  "1045-F1": "January 8, 2025",
+  "1045-F1": "March 4, 2025",
   "1046-F2": "February 13, 2025",
-  "1047-F3": "March 4, 2025",
+  "1047-F3": "January 8, 2025",
 }
 
 export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: ReturnItemsProps) {
@@ -156,7 +156,7 @@ export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: Re
 
       <ReturnComments />
 
-      {analysisResult && (
+      {(
         <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">Select a return reason</label>
           <select
@@ -185,4 +185,5 @@ export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: Re
     </div>
   )
 }
+
 

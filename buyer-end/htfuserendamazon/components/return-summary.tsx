@@ -45,7 +45,7 @@ export function ReturnSummary({ trackingNumber = "FedEx #1234 5678 9012" }: Retu
             <p className="font-medium">
               Returning {totalItems} {totalItems === 1 ? "item" : "items"}
             </p>
-            {analysisResult && <p className="text-sm text-gray-600">Reason: {reason}</p>}
+            {<p className="text-sm text-gray-600">Reason: {reason}</p>}
           </div>
 
           {comments && (
@@ -78,4 +78,5 @@ export function ReturnSummary({ trackingNumber = "FedEx #1234 5678 9012" }: Retu
     </div>
   )
 }
+
 
