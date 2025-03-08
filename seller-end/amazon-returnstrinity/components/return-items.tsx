@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { CheckCircle2, ChevronDown, ChevronUp } from "lucide-react"
+import { CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
 import { useReturn } from "@/context/return-context"
 import { ReturnImageUpload } from "./return-image-upload"
 import { ReturnComments } from "./return-comments"
@@ -15,15 +15,15 @@ interface ReturnItemsProps {
   analysisResult: JudgmentResult | null
 }
 
-// Sample order dates - in a real app, these would come from the API
+// Updated order dates in descending order (most recent first)
 const orderDates: Record<string, string> = {
-  "1045-F1": "May 15, 2023",
-  "1046-F2": "April 28, 2023",
-  "1047-F3": "April 10, 2023",
+  "1045-F1": "March 15, 2025", // Most recent - White shirt
+  "1046-F2": "February 13, 2025",
+  "1047-F3": "January 8, 2025", // Oldest
 }
 
 export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: ReturnItemsProps) {
-  const { selectedItems, updateItemQuantity, reason, setReason } = useReturn()
+  const { selectedItems, updateItemQuantity, reason, setReason, uploadedImages } = useReturn()
   const [expandedItemId, setExpandedItemId] = useState<number | null>(null)
   const router = useRouter()
 
@@ -78,9 +78,9 @@ export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: Re
     <div className="space-y-6">
       {Object.entries(itemsByOrder).map(([orderId, items]) => (
         <div key={orderId} className="bg-white border border-gray-200 rounded-lg shadow-sm">
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-gray-200 bg-[#f3f3f3]">
             <div className="flex items-center text-sm text-gray-600">
-              <CheckCircle2 className="h-5 w-5 text-green-600 mr-2" />
+              <CheckCircle2 className="h-5 w-5 text-[#f90] mr-2" />
               <div>
                 <span className="font-medium">Order #{orderId}</span>
                 <div className="text-xs text-gray-500 mt-0.5">Ordered on {orderDates[orderId] || "Unknown date"}</div>
@@ -105,10 +105,12 @@ export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: Re
                   />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-medium">{item.name}</h3>
+                      <h3 className="font-medium text-[#0066c0] hover:text-[#c45500] hover:underline cursor-pointer">
+                        {item.name}
+                      </h3>
                       <button
                         onClick={() => toggleItemDescription(item.id)}
-                        className="text-xs text-gray-500 hover:text-gray-700 flex items-center"
+                        className="text-xs text-[#0066c0] hover:text-[#c45500] hover:underline flex items-center"
                       >
                         Item details
                         {expandedItemId === item.id ? (
@@ -154,7 +156,7 @@ export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: Re
 
       <ReturnComments />
 
-      {(
+      {analysisResult && (
         <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">Select a return reason</label>
           <select
@@ -178,10 +180,10 @@ export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: Re
           condition={analysisResult.condition_grade}
           originalPrice={item.price}
           analysisResult={analysisResult}
+          uploadedImages={uploadedImages}
         />
       )}
     </div>
   )
 }
-
 
