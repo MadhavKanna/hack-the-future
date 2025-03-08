@@ -37,7 +37,21 @@ export default function FacebookDemoPage() {
       const storedData = localStorage.getItem("facebookListingData")
       if (storedData) {
         try {
-          setListingData(JSON.parse(storedData))
+          const parsedData = JSON.parse(storedData)
+
+          // Clean up the description to remove any prices
+          if (parsedData.description) {
+            // Remove dollar amounts (e.g., $18.00, $8.00)
+            parsedData.description = parsedData.description.replace(/\$\d+(\.\d+)?/g, "")
+            // Remove standalone numbers that might be prices (e.g., 8.00, 18.00)
+            parsedData.description = parsedData.description.replace(/\b\d+\.\d+\b/g, "")
+            // Remove integer prices (e.g., 8, 18)
+            parsedData.description = parsedData.description.replace(/\b\d+\b(?!\.\d)/g, "")
+            // Clean up extra spaces
+            parsedData.description = parsedData.description.replace(/\s+/g, " ").trim()
+          }
+
+          setListingData(parsedData)
         } catch (e) {
           console.error("Error parsing listing data:", e)
         }
@@ -247,5 +261,3 @@ export default function FacebookDemoPage() {
     </div>
   )
 }
-
-
