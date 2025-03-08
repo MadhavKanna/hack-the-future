@@ -4,9 +4,10 @@ import type React from "react"
 
 import { useState } from "react"
 import { Camera, Upload, X } from "lucide-react"
+import { useReturn } from "@/context/return-context"
 
 export function ReturnImageUpload() {
-  const [uploadedImages, setUploadedImages] = useState<string[]>([])
+  const { uploadedImages, setUploadedImages } = useReturn()
   const [imageError, setImageError] = useState(false)
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,6 +39,7 @@ export function ReturnImageUpload() {
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
       <h3 className="font-medium mb-3">
         Upload Item Images <span className="text-red-500">*</span>
+        <span className="text-xs text-gray-500 font-normal ml-2">(Required for AI Analysis)</span>
       </h3>
       <div
         className={`border-2 border-dashed ${imageError ? "border-red-500" : "border-gray-300"} rounded-md p-4 text-center`}
@@ -84,4 +86,6 @@ export function ReturnImageUpload() {
     </div>
   )
 }
+
+
 

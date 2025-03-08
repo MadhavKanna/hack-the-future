@@ -51,10 +51,12 @@ export interface JudgmentResult {
 }
 
 export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
-  const { selectedItems, comments } = useReturn()
+  const { selectedItems, comments, uploadedImages } = useReturn()
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<JudgmentResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
+  const [useMock, setUseMock] = useState(false)
 
   // Get the first selected item for analysis
   const item = selectedItems.length > 0 ? selectedItems[0] : null
@@ -97,31 +99,56 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
       return
     }
 
+    // Check if at least one image is uploaded
+    if (uploadedImages.length === 0) {
+      setError("Please upload at least one image of your item before analysis")
+      return
+    }
+
     setLoading(true)
     setError(null)
 
     try {
+      // Use the first uploaded image instead of the product image
+      const imageToUse = uploadedImages[0]
+
+      console.log("Sending analysis request with data:", {
+        imageUrl: imageToUse, // Use uploaded image
+        userComment: comments,
+        userScore,
+        daysSincePurchase,
+        orderDescription: item.description || item.name,
+        useMock,
+      })
+
       const response = await fetch("/api/analyze-return", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          imageUrl: item.image,
+          imageUrl: imageToUse, // Use uploaded image
           userComment: comments,
           userScore,
           daysSincePurchase,
           orderDescription: item.description || item.name,
           harshMode: false,
+          useMock: useMock,
         }),
       })
 
       if (!response.ok) {
-        throw new Error("Failed to analyze return")
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `Server responded with status: ${response.status}`)
       }
 
       const data = await response.json()
       console.log("API Response:", data)
+
+      // Check if the response contains an error
+      if (data.error) {
+        throw new Error(data.error)
+      }
 
       // Ensure the final_decision is one of the expected values
       if (!["refund", "credit", "reject"].includes(data.final_decision)) {
@@ -130,11 +157,40 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
 
       setResult(data)
       onAnalysisComplete(data)
+      setRetryCount(0) // Reset retry count on success
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unknown error occurred")
+      console.error("Error analyzing return:", err)
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred"
+      setError(errorMessage)
+
+      // If we've already retried, don't retry again
+      if (retryCount > 0 || useMock) {
+        console.log("Already retried or using mock, not retrying again")
+        return
+      }
+
+      // Increment retry count
+      setRetryCount(retryCount + 1)
+
+      // If there's an API error, try again with the mock endpoint
+      setUseMock(true)
+      setError(`${error} - Retrying with mock data...`)
+
+      // Wait a moment then retry with mock data
+      setTimeout(() => {
+        analyzeReturn()
+      }, 1000)
     } finally {
-      setLoading(false)
+      if (retryCount === 0 || !useMock) {
+        setLoading(false)
+      }
     }
+  }
+
+  // Toggle between real API and mock
+  const toggleMockMode = () => {
+    setUseMock(!useMock)
+    setError(null)
   }
 
   // Get decision color
@@ -162,23 +218,41 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-medium">AI Return Analysis</h3>
-        {!result && (
-          <button
-            onClick={analyzeReturn}
-            disabled={loading || !item || !comments || comments.trim().length === 0}
-            className="px-3 py-1 text-sm bg-[#f90] text-white rounded-md hover:bg-[#f0ad4e] disabled:bg-gray-300 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <span className="flex items-center">
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Analyzing...
-              </span>
-            ) : (
-              "Analyze Return"
-            )}
-          </button>
-        )}
+        <div className="flex gap-2">
+          {!result && (
+            <button
+              onClick={toggleMockMode}
+              className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+            >
+              {useMock ? "Use Real API" : "Use Mock Data"}
+            </button>
+          )}
+          {!result && (
+            <button
+              onClick={analyzeReturn}
+              disabled={
+                loading || !item || !comments || comments.trim().length === 0 || uploadedImages.length === 0 // Add this condition
+              }
+              className="px-3 py-1 text-sm bg-[#f90] text-white rounded-md hover:bg-[#f0ad4e] disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <span className="flex items-center">
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Analyzing...
+                </span>
+              ) : (
+                "Analyze Return"
+              )}
+            </button>
+          )}
+        </div>
       </div>
+
+      {useMock && !loading && !result && (
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-2 rounded-md mb-4 text-xs">
+          Using mock data for analysis (Gemini API will not be called)
+        </div>
+      )}
 
       {error && <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-md mb-4 text-sm">{error}</div>}
 
@@ -188,6 +262,11 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
           <p className="text-xs mt-2">
             {!item && "Please select an item to return"}
             {item && (!comments || comments.trim().length === 0) && "Please add comments about your return"}
+            {item &&
+              comments &&
+              comments.trim().length > 0 &&
+              uploadedImages.length === 0 &&
+              "Please upload at least one image of your item"}
           </p>
         </div>
       )}
@@ -225,7 +304,7 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
                 <p className="font-medium">{result.comment_analysis.fraud_risk}</p>
               </div>
             </div>
-            {result.comment_analysis.red_flags.length > 0 && (
+            {result.comment_analysis.red_flags && result.comment_analysis.red_flags.length > 0 && (
               <div className="mt-2">
                 <p className="text-xs text-gray-500">Red Flags</p>
                 <ul className="text-xs text-red-600 list-disc list-inside">
@@ -262,5 +341,6 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
     </div>
   )
 }
+
 
 

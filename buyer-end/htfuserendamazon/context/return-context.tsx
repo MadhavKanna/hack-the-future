@@ -25,6 +25,8 @@ interface ReturnContextType {
   setReason: (reason: string) => void
   comments: string
   setComments: (comments: string) => void
+  uploadedImages: string[]
+  setUploadedImages: (images: string[]) => void
 }
 
 const ReturnContext = createContext<ReturnContextType | undefined>(undefined)
@@ -44,6 +46,9 @@ export function ReturnProvider({ children }: { children: ReactNode }) {
 
   const [reason, setReasonValue] = useState<string>("Wrong item received")
   const [comments, setCommentsValue] = useState<string>("")
+
+  // Add state for uploaded images
+  const [uploadedImages, setUploadedImagesState] = useState<string[]>([])
 
   // Update localStorage when selectedItems changes
   useEffect(() => {
@@ -86,6 +91,11 @@ export function ReturnProvider({ children }: { children: ReactNode }) {
     setCommentsValue(comments)
   }
 
+  // Add setter function for uploaded images
+  const setUploadedImages = (images: string[]) => {
+    setUploadedImagesState(images)
+  }
+
   return (
     <ReturnContext.Provider
       value={{
@@ -99,6 +109,8 @@ export function ReturnProvider({ children }: { children: ReactNode }) {
         setReason,
         comments,
         setComments,
+        uploadedImages,
+        setUploadedImages,
       }}
     >
       {children}
@@ -113,4 +125,6 @@ export function useReturn() {
   }
   return context
 }
+
+
 
