@@ -289,16 +289,16 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
 
       {loading && (
         <div className="text-center py-8">
-          <div className="mb-4">
-            <div className="gemini-dots mb-2">
-              <div className="gemini-dot"></div>
-              <div className="gemini-dot"></div>
-              <div className="gemini-dot"></div>
-            </div>
-            <p className="text-gray-600 text-lg">Gemini is thinking</p>
+        <div className="mb-4">
+          <div className="gemini-stars mb-2">
+            <div className="gemini-star"></div> {/* Top star */}
+            <div className="gemini-star"></div> {/* Center star */}
+            <div className="gemini-star"></div> {/* Bottom star */}
           </div>
-          <p className="text-sm text-gray-500">Analyzing your return request...</p>
+          <p className="text-gray-600 text-lg">Gemini is thinking</p>
         </div>
+        <p className="text-sm text-gray-500">Analyzing your return request...</p>
+      </div>
       )}
 
       {result && (
@@ -400,3 +400,4 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
     </div>
   )
 }
+

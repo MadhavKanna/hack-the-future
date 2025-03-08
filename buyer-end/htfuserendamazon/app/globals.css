@@ -9,6 +9,77 @@
   align-items: center;
   justify-content: center;
 }
+/* Add these new styles for the Gemini loading animation */
+.gemini-stars {
+  /* display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the group of stars */
+  /* justify-content: center;
+  gap: 4px;
+  position: relative;
+  width: 24px; /* Adjust width to fit the offset stars */
+  /* height: 48px; Adjust height for the triangular arrangement */ 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.gemini-star {
+  width: 12px;
+  height: 12px;
+  position: relative;
+  animation: gemini-shine 1.5s infinite;
+}
+
+.gemini-star::before,
+.gemini-star::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: currentColor;
+  clip-path: polygon(
+    50% 0%,
+    75% 50%,
+    50% 100%,
+    25% 50%
+  ); /* 4-pointed star shape */
+}
+
+/* Position the stars in a triangular arrangement */
+.gemini-star:nth-child(1) {
+  color: #ea4335; /* Google Red */
+  animation-delay: 0s;
+  margin-left: 6px; /* Offset the top star slightly to the right */
+}
+
+.gemini-star:nth-child(2) {
+  color: #8e2de2; /* Purple */
+  animation-delay: 0.2s;
+  margin-left: -6px; /* Offset the center star slightly to the left */
+}
+
+.gemini-star:nth-child(3) {
+  color: #4285f4; /* Google Blue */
+  animation-delay: 0.4s;
+  margin-left: 6px; /* Offset the bottom star slightly to the right */
+}
+
+@keyframes gemini-shine {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
 
 .gemini-dot {
   width: 6px;
@@ -110,3 +181,4 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
