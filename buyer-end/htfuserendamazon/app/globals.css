@@ -2,6 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Add these new styles for the Gemini loading animation */
+.gemini-dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+
+.gemini-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: gemini-shine 1.5s infinite;
+}
+
+.gemini-dot:nth-child(1) {
+  background: #ea4335; /* Google Red */
+  animation-delay: 0s;
+}
+
+.gemini-dot:nth-child(2) {
+  background: #8e2de2; /* Purple */
+  animation-delay: 0.2s;
+}
+
+.gemini-dot:nth-child(3) {
+  background: #4285f4; /* Google Blue */
+  animation-delay: 0.4s;
+}
+
+@keyframes gemini-shine {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -68,4 +110,3 @@ body {
     @apply bg-background text-foreground;
   }
 }
-

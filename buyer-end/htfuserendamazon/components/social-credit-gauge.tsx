@@ -50,7 +50,7 @@ export function SocialCreditGauge({ score = 75 }: SocialCreditGaugeProps) {
 
     // Fixed needle position at 1:30 (75 on a 0-100 scale, which is 45 degrees from top)
     // Convert 45 degrees to radians and adjust for the semicircle starting position
-    const needleAngle = Math.PI - Math.PI / 4 // 45 degrees = PI/4 radians
+    const needleAngle = Math.PI / -4 // 45 degrees = PI/4 radians
     const needleLength = radius - 10
     const needleX = centerX + needleLength * Math.cos(needleAngle)
     const needleY = centerY + needleLength * Math.sin(needleAngle)
@@ -117,4 +117,5 @@ export function SocialCreditGauge({ score = 75 }: SocialCreditGaugeProps) {
     </div>
   )
 }
+
 
