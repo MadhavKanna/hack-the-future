@@ -16,7 +16,7 @@ const orders = [
         name: "Wireless Bluetooth Headphones",
         price: "$79.99",
         quantity: 1,
-        image: "/placeholder.svg?height=60&width=60",
+        image: "https://m.media-amazon.com/images/I/41lArSiD5hL.jpg",
         description:
           "Premium wireless headphones with active noise cancellation, 30-hour battery life, and comfortable over-ear design. Features Bluetooth 5.0 connectivity, built-in microphone for calls, and touch controls for easy operation. Includes carrying case, charging cable, and 3.5mm audio cable.",
       },
@@ -25,7 +25,7 @@ const orders = [
         name: "Classic White Shirt - Medium",
         price: "$49.99",
         quantity: 1,
-        image: "/placeholder.svg?height=60&width=60",
+        image: "https://cdn-images.farfetch-contents.com/25/62/79/20/25627920_55647628_600.jpg",
         description:
           "Premium cotton white shirt with button-down collar. Classic fit, machine washable. 100% cotton material, perfect for business or casual wear. Features reinforced stitching and durable buttons.",
       },
@@ -103,5 +103,6 @@ export function OrdersList() {
     </div>
   )
 }
+
 
 
