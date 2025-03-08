@@ -9,7 +9,7 @@ export function BigLogo() {
           alt="Kintsugi Logo"
           className="h-32 w-32"
         />
-        <span className="text-4xl font-bold text-gray-900">Kintsugi</span>
+        <span className="text-8xl font-bold text-gray-900">Kintsugi</span>
       </div>
       <div className="flex items-center gap-1 text-lg">
         <span className="text-gray-500">powered by</span>
