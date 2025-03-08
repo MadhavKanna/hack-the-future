@@ -15,15 +15,15 @@ interface ReturnItemsProps {
   analysisResult: JudgmentResult | null
 }
 
-// Updated order dates for 2025
+// Updated order dates in descending order (most recent first)
 const orderDates: Record<string, string> = {
-  "1045-F1": "March 4, 2025",
+  "1045-F1": "March 15, 2025", // Most recent - White shirt
   "1046-F2": "February 13, 2025",
-  "1047-F3": "January 8, 2025",
+  "1047-F3": "January 8, 2025", // Oldest
 }
 
 export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: ReturnItemsProps) {
-  const { selectedItems, updateItemQuantity, reason, setReason } = useReturn()
+  const { selectedItems, updateItemQuantity, reason, setReason, uploadedImages } = useReturn()
   const [expandedItemId, setExpandedItemId] = useState<number | null>(null)
   const router = useRouter()
 
@@ -156,7 +156,7 @@ export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: Re
 
       <ReturnComments />
 
-      {(
+      {analysisResult && (
         <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">Select a return reason</label>
           <select
@@ -180,11 +180,11 @@ export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: Re
           condition={analysisResult.condition_grade}
           originalPrice={item.price}
           analysisResult={analysisResult}
+          uploadedImages={uploadedImages}
         />
       )}
     </div>
   )
 }
-
 
 
