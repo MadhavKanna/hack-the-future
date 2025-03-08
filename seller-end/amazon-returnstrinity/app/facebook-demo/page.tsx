@@ -1,22 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import {
-  ArrowLeft,
-  ThumbsUp,
-  MessageCircle,
-  Share2,
-  Search,
-  Menu,
-  Bell,
-  Home,
-  Users,
-  ShoppingBag,
-  Video,
-  Flag,
-  MapPin,
-  MoreHorizontal,
-} from "lucide-react"
+import { ArrowLeft, ThumbsUp, MessageCircle, Share2, Search, Menu, Bell, Home, Users, ShoppingBag, Video, Flag, MapPin, MoreHorizontal } from 'lucide-react'
 import Link from "next/link"
 
 export default function FacebookDemoPage() {
@@ -36,7 +21,21 @@ export default function FacebookDemoPage() {
     if (typeof window !== "undefined") {
       const storedData = localStorage.getItem("facebookListingData")
       if (storedData) {
-        setListingData(JSON.parse(storedData))
+        try {
+          const parsedData = JSON.parse(storedData)
+
+          // Ensure the description mentions the correct price
+          if (parsedData.description) {
+            parsedData.description = parsedData.description
+              .replace(/\$\d+(\.\d+)?/g, '') // Remove prices with $ sign
+              .replace(/\b\d+\.\d+\b/g, '') // Remove decimal numbers without $ sign
+              .replace(/\s+/g, ' ').trim(); // Clean up extra spaces
+          }
+
+          setListingData(parsedData)
+        } catch (e) {
+          console.error("Error parsing listing data:", e)
+        }
       }
     }
 
@@ -181,11 +180,23 @@ export default function FacebookDemoPage() {
             </div>
 
             <div className="mb-4">
-              <img
-                src={listingData.image || "/placeholder.svg?height=300&width=400"}
-                alt={listingData.title}
-                className="w-full max-h-96 object-contain bg-gray-100 rounded-md"
-              />
+              {listingData.image ? (
+                <div className="w-full h-96 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
+                  <img
+                    src={listingData.image || "/placeholder.svg"}
+                    alt={listingData.title}
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-96 bg-gray-100 rounded-md flex items-center justify-center">
+                  <img
+                    src="/placeholder.svg?height=300&width=400"
+                    alt={listingData.title}
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="flex justify-between text-gray-500 border-t border-b border-gray-200 py-2 mb-3">

@@ -230,14 +230,7 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-medium">AI Return Analysis</h3>
         <div className="flex gap-2">
-          {!result && (
-            <button
-              onClick={toggleMockMode}
-              className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
-            >
-              {useMock ? "Use Real API" : "Use Mock Data"}
-            </button>
-          )}
+          
           {!result && (
             <button
               onClick={analyzeReturn}
