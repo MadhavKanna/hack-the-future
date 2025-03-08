@@ -1,6 +1,8 @@
+"use client"
+
 import { useState } from "react"
 import { useReturn } from "@/context/return-context"
-import { Loader2, UserRound, CheckCircle } from "lucide-react"
+import { Loader2 } from "lucide-react"
 
 interface AIJudgmentProps {
   userScore: number
@@ -55,8 +57,6 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
   const [error, setError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
   const [useMock, setUseMock] = useState(false)
-  const [humanReviewRequested, setHumanReviewRequested] = useState(false)
-  const [humanReviewLoading, setHumanReviewLoading] = useState(false)
 
   // Get the first selected item for analysis
   const item = selectedItems.length > 0 ? selectedItems[0] : null
@@ -68,16 +68,16 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
     const currentDate = new Date()
     let orderDate
 
-    // Set the order date based on the order ID with updated dates
+    // Set the order date based on the order ID
     switch (item.orderId) {
       case "1045-F1":
-        orderDate = new Date("2025-03-15") // Most recent
+        orderDate = new Date("2025-01-08")
         break
       case "1046-F2":
-        orderDate = new Date("2025-02-13") // Middle
+        orderDate = new Date("2025-02-13")
         break
       case "1047-F3":
-        orderDate = new Date("2025-01-08") // Oldest
+        orderDate = new Date("2025-03-04")
         break
       default:
         orderDate = new Date()
@@ -100,7 +100,7 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
     }
 
     // Check if at least one image is uploaded
-    if (!uploadedImages || uploadedImages.length === 0) {
+    if (uploadedImages.length === 0) {
       setError("Please upload at least one image of your item before analysis")
       return
     }
@@ -214,40 +214,17 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
     return "text-gray-600"
   }
 
-  // Handle human review request
-  const requestHumanReview = () => {
-    setHumanReviewLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      setHumanReviewLoading(false)
-      setHumanReviewRequested(true)
-    }, 1500)
-  }
-
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-medium">AI Return Analysis</h3>
         <div className="flex gap-2">
-          {!result && (
-            <button
-              onClick={toggleMockMode}
-              className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
-            >
-              {useMock ? "Use Real API" : "Use Mock Data"}
-            </button>
-          )}
+          
           {!result && (
             <button
               onClick={analyzeReturn}
               disabled={
-                loading ||
-                !item ||
-                !comments ||
-                comments.trim().length === 0 ||
-                !uploadedImages ||
-                uploadedImages.length === 0
+                loading || !item || !comments || comments.trim().length === 0 || uploadedImages.length === 0 // Add this condition
               }
               className="px-3 py-1 text-sm bg-[#f90] text-white rounded-md hover:bg-[#f0ad4e] disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
@@ -281,13 +258,13 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
             {item &&
               comments &&
               comments.trim().length > 0 &&
-              (!uploadedImages || uploadedImages.length === 0) &&
+              uploadedImages.length === 0 &&
               "Please upload at least one image of your item"}
           </p>
         </div>
       )}
 
-      {loading && (
+{loading && (
         <div className="text-center py-8">
         <div className="mb-4">
           <div className="gemini-stars mb-2">
@@ -358,47 +335,11 @@ export function AIJudgment({ userScore, onAnalysisComplete }: AIJudgmentProps) {
               <p className="font-medium">New Score: {result.new_user_score}</p>
             </div>
           </div>
-
-          {/* Human Review Request Button - only show if not a full refund and not already requested */}
-          {result.final_decision !== "refund" && !humanReviewRequested && (
-            <div className="mt-4">
-              <button
-                onClick={requestHumanReview}
-                disabled={humanReviewLoading}
-                className="w-full flex items-center justify-center py-2 px-4 bg-[#232f3e] text-white rounded-md hover:bg-[#374151] transition-colors"
-              >
-                {humanReviewLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Submitting request...
-                  </>
-                ) : (
-                  <>
-                    <UserRound className="h-4 w-4 mr-2" />
-                    Request Human Review
-                  </>
-                )}
-              </button>
-              <p className="text-xs text-gray-500 mt-2 text-center">
-                A customer service representative will review your case within 24-48 hours
-              </p>
-            </div>
-          )}
-
-          {/* Show confirmation when human review is requested */}
-          {humanReviewRequested && (
-            <div className="bg-green-50 border border-green-200 rounded-md p-4 text-center">
-              <CheckCircle className="h-6 w-6 text-green-500 mx-auto mb-2" />
-              <h4 className="font-medium text-green-800">Human Review Requested</h4>
-              <p className="text-sm text-green-700 mt-1">
-                Your request has been submitted. A customer service representative will contact you within 24-48 hours.
-              </p>
-            </div>
-          )}
         </div>
       )}
     </div>
   )
 }
+
 
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink } from 'lucide-react'
 import type { JudgmentResult } from "./ai-judgment"
 import { useRouter } from "next/navigation"
 
@@ -155,25 +155,29 @@ export function MarketplaceOptions({
               {option.name === "Facebook Marketplace" ? (
                 <button
                   onClick={() => {
-                    // Store the listing data in localStorage
-                    const listingData = {
-                      title: `${analysisResult.condition_grade} ${itemName} for Sale`,
-                      price: option.estimatedValue,
-                      condition: analysisResult.condition_grade,
-                      description:
-                        analysisResult.resale_ad ||
-                        `Selling a ${itemName} in ${analysisResult.condition_grade.toLowerCase()} condition. ${
-                          analysisResult.damage_severity !== "no damage"
-                            ? `Has ${analysisResult.damage_severity}.`
-                            : "No damage."
-                        } Original price was ${originalPrice}.`,
-                      timeToSell: option.timeToSell,
-                      fees: option.fees,
-                      image: uploadedImages && uploadedImages.length > 0 ? uploadedImages[0] : null,
-                    }
-                    localStorage.setItem("facebookListingData", JSON.stringify(listingData))
-                    router.push("/facebook-demo")
-                  }}
+                  // Get the price value without the $ sign
+                  const priceValue = option.estimatedValue.replace('$', '').trim();
+                  
+                  // Store the listing data in localStorage
+                  const listingData = {
+                    title: `${analysisResult.condition_grade} ${itemName} for Sale`,
+                    price: option.estimatedValue,
+                    condition: analysisResult.condition_grade,
+                    description:
+                      analysisResult.resale_ad 
+                        ? analysisResult.resale_ad.replace(/\$\d+(\.\d+)?/g, option.estimatedValue) // Replace any price in the resale ad
+                        : `Selling a ${itemName} in ${analysisResult.condition_grade.toLowerCase()} condition. ${
+                            analysisResult.damage_severity !== "no damage"
+                              ? `Has ${analysisResult.damage_severity}.`
+                              : "No damage."
+                          } Asking ${option.estimatedValue}. Original price was ${originalPrice}.`,
+                    timeToSell: option.timeToSell,
+                    fees: option.fees,
+                    image: uploadedImages && uploadedImages.length > 0 ? uploadedImages[0] : null,
+                  }
+                  localStorage.setItem("facebookListingData", JSON.stringify(listingData))
+                  router.push("/facebook-demo")
+                }}
                   className="flex items-center justify-center w-full py-2 px-4 bg-[#f3f3f3] hover:bg-[#e5e5e5] rounded-md text-sm font-medium transition-colors"
                 >
                   Post on {option.name} <ExternalLink className="ml-2 h-4 w-4" />

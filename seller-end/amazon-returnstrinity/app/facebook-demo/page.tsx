@@ -1,25 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import {
-  ArrowLeft,
-  ThumbsUp,
-  MessageCircle,
-  Share2,
-  Search,
-  Menu,
-  Bell,
-  Home,
-  Users,
-  ShoppingBag,
-  Video,
-  Flag,
-  MapPin,
-  MoreHorizontal,
-} from "lucide-react"
+import { ArrowLeft, ThumbsUp, MessageCircle, Share2, Search, Menu, Bell, Home, Users, ShoppingBag, Video, Flag, MapPin, MoreHorizontal } from 'lucide-react'
 import Link from "next/link"
 
-export default function FacebookDemoPage() {
+export default function ShopifyFacebookDemoPage() {
   const [loading, setLoading] = useState(true)
   const [listingData, setListingData] = useState({
     title: "Item for Sale",
@@ -33,20 +18,33 @@ export default function FacebookDemoPage() {
 
   // Load listing data from localStorage
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedData = localStorage.getItem("facebookListingData")
+    if (typeof window !== 'undefined') {
+      const storedData = localStorage.getItem('facebookListingData')
       if (storedData) {
-        setListingData(JSON.parse(storedData))
+        try {
+          const parsedData = JSON.parse(storedData);
+
+        // Ensure the description mentions the correct price
+        if (parsedData.description) {
+          parsedData.description = parsedData.description.replace(/\b\d+\.\d+\b/g, ''); // Removes standalone numbers like "8.00"
+          parsedData.description = parsedData.description.replace(/\$\d+(\.\d+)?/g, ''); // Removes dollar amounts like "$8.00"
+          parsedData.description = parsedData.description.replace(/\s+/g, ' ').trim(); // Clean up extra spaces
+        }
+
+        setListingData(parsedData);
+      } catch (e) {
+        console.error("Error parsing listing data:", e)
       }
     }
+  }
 
-    // Simulate loading
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 1500)
+  // Simulate loading
+  const timer = setTimeout(() => {
+    setLoading(false)
+  }, 1500)
 
-    return () => clearTimeout(timer)
-  }, [])
+  return () => clearTimeout(timer)
+}, [])
 
   // Format current date for the post
   const postDate = new Date().toLocaleDateString("en-US", {
@@ -138,7 +136,7 @@ export default function FacebookDemoPage() {
 
       <main className="max-w-screen-xl mx-auto px-4 py-4">
         <div className="flex items-center mb-4">
-          <Link href="/returns" className="flex items-center text-[#4267B2]">
+          <Link href="/shopify/returns" className="flex items-center text-[#4267B2]">
             <ArrowLeft className="h-5 w-5 mr-2" />
             Back to Returns
           </Link>
@@ -181,11 +179,19 @@ export default function FacebookDemoPage() {
             </div>
 
             <div className="mb-4">
-              <img
-                src={listingData.image || "/placeholder.svg?height=300&width=400"}
-                alt={listingData.title}
-                className="w-full max-h-96 object-contain bg-gray-100 rounded-md"
-              />
+              {listingData.image ? (
+                <img
+                  src={listingData.image || "/placeholder.svg"}
+                  alt={listingData.title}
+                  className="w-full max-h-96 object-contain bg-gray-100 rounded-md"
+                />
+              ) : (
+                <img
+                  src="/placeholder.svg?height=300&width=400"
+                  alt={listingData.title}
+                  className="w-full max-h-96 object-contain bg-gray-100 rounded-md"
+                />
+              )}
             </div>
 
             <div className="flex justify-between text-gray-500 border-t border-b border-gray-200 py-2 mb-3">
@@ -235,4 +241,5 @@ export default function FacebookDemoPage() {
     </div>
   )
 }
+
 
