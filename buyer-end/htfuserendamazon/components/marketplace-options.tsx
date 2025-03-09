@@ -1,8 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink } from 'lucide-react'
 import type { JudgmentResult } from "./ai-judgment"
+import { useRouter } from "next/navigation"
 
 interface MarketplaceOption {
   name: string
@@ -19,10 +20,19 @@ interface MarketplaceOptionsProps {
   condition: string
   originalPrice: string
   analysisResult: JudgmentResult
+  uploadedImages: string[] | null
 }
 
-export function MarketplaceOptions({ itemName, condition, originalPrice, analysisResult }: MarketplaceOptionsProps) {
+export function MarketplaceOptions({
+  itemName,
+  condition,
+  originalPrice,
+  analysisResult,
+  uploadedImages,
+}: MarketplaceOptionsProps) {
   const [options, setOptions] = useState<MarketplaceOption[]>([])
+  const [selectedOption, setSelectedOption] = useState<string | null>("Facebook Marketplace")
+  const router = useRouter()
 
   useEffect(() => {
     // Generate marketplace options based on the analysis result
@@ -107,9 +117,13 @@ export function MarketplaceOptions({ itemName, condition, originalPrice, analysi
         Based on our analysis, we recommend selling your item on these marketplaces:
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         {options.map((option) => (
-          <div key={option.name} className="border border-gray-200 rounded-md overflow-hidden">
+          <div
+            key={option.name}
+            className={`border ${selectedOption === option.name ? "border-blue-500" : "border-gray-200"} rounded-md overflow-hidden cursor-pointer`}
+            onClick={() => setSelectedOption(option.name)}
+          >
             <div className={`${option.color} h-2`}></div>
             <div className="p-4">
               <div className="flex items-center mb-3">
@@ -138,14 +152,46 @@ export function MarketplaceOptions({ itemName, condition, originalPrice, analysi
                 </div>
               </div>
 
-              <a
-                href={option.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center w-full py-2 px-4 bg-[#f3f3f3] hover:bg-[#e5e5e5] rounded-md text-sm font-medium transition-colors"
-              >
-                Post on {option.name} <ExternalLink className="ml-2 h-4 w-4" />
-              </a>
+              {option.name === "Facebook Marketplace" ? (
+                <button
+                  onClick={() => {
+                  // Get the price value without the $ sign
+                  const priceValue = option.estimatedValue.replace('$', '').trim();
+                  
+                  // Store the listing data in localStorage
+                  const listingData = {
+                    title: `${analysisResult.condition_grade} ${itemName} for Sale`,
+                    price: option.estimatedValue,
+                    condition: analysisResult.condition_grade,
+                    description:
+                      analysisResult.resale_ad 
+                        ? analysisResult.resale_ad.replace(/\$\d+(\.\d+)?/g, option.estimatedValue) // Replace any price in the resale ad
+                        : `Selling a ${itemName} in ${analysisResult.condition_grade.toLowerCase()} condition. ${
+                            analysisResult.damage_severity !== "no damage"
+                              ? `Has ${analysisResult.damage_severity}.`
+                              : "No damage."
+                          } Asking ${option.estimatedValue}. Original price was ${originalPrice}.`,
+                    timeToSell: option.timeToSell,
+                    fees: option.fees,
+                    image: uploadedImages && uploadedImages.length > 0 ? uploadedImages[0] : null,
+                  }
+                  localStorage.setItem("facebookListingData", JSON.stringify(listingData))
+                  router.push("/facebook-demo")
+                }}
+                  className="flex items-center justify-center w-full py-2 px-4 bg-[#f3f3f3] hover:bg-[#e5e5e5] rounded-md text-sm font-medium transition-colors"
+                >
+                  Post on {option.name} <ExternalLink className="ml-2 h-4 w-4" />
+                </button>
+              ) : (
+                <a
+                  href={option.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-full py-2 px-4 bg-[#f3f3f3] hover:bg-[#e5e5e5] rounded-md text-sm font-medium transition-colors"
+                >
+                  Post on {option.name} <ExternalLink className="ml-2 h-4 w-4" />
+                </a>
+              )}
             </div>
           </div>
         ))}
@@ -157,4 +203,5 @@ export function MarketplaceOptions({ itemName, condition, originalPrice, analysi
     </div>
   )
 }
+
 
