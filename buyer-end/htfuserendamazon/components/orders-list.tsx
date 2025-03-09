@@ -43,7 +43,7 @@ const orders = [
         name: "Portable Bluetooth Speaker",
         price: "$59.99",
         quantity: 1,
-        image: "/placeholder.svg?height=60&width=60",
+        image: "https://multimedia.bbycastatic.ca/multimedia/products/500x500/137/13797/13797305.jpg",
         description:
           "Compact waterproof Bluetooth speaker with 360° sound, 12-hour playtime, and built-in microphone. IPX7 waterproof rating makes it perfect for outdoor use. Includes USB-C charging cable and carabiner clip for easy attachment to bags.",
       },
@@ -52,7 +52,7 @@ const orders = [
         name: "USB-C Charging Cable (2-pack)",
         price: "$29.96",
         quantity: 1,
-        image: "/placeholder.svg?height=60&width=60",
+        image: "https://m.media-amazon.com/images/I/71NWeErdDtL._AC_UF894,1000_QL80_.jpg",
         description:
           "Set of two 6ft USB-C to USB-A charging cables with nylon braided exterior for durability. Supports fast charging up to 3A and data transfer speeds up to 480Mbps. Compatible with all USB-C devices including smartphones, tablets, and laptops.",
       },
@@ -70,7 +70,7 @@ const orders = [
         name: "Tablet - 10.2 inch, 64GB",
         price: "$349.99",
         quantity: 1,
-        image: "/placeholder.svg?height=60&width=60",
+        image: "https://m.media-amazon.com/images/I/71Aylhv6YAL.jpg",
         description:
           "10.2-inch Retina display tablet with A13 Bionic chip, 64GB storage, and all-day battery life. Features 8MP back camera, 12MP Ultra Wide front camera with Center Stage, and support for Apple Pencil (1st generation) and Smart Keyboard. Includes USB-C to Lightning Cable and 20W USB-C Power Adapter.",
       },
@@ -103,5 +103,6 @@ export function OrdersList() {
     </div>
   )
 }
+
 
 
