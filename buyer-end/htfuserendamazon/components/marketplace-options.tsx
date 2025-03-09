@@ -155,29 +155,51 @@ export function MarketplaceOptions({
               {option.name === "Facebook Marketplace" ? (
                 <button
                   onClick={() => {
-                  // Get the price value without the $ sign
-                  const priceValue = option.estimatedValue.replace('$', '').trim();
-                  
-                  // Store the listing data in localStorage
-                  const listingData = {
-                    title: `${analysisResult.condition_grade} ${itemName} for Sale`,
-                    price: option.estimatedValue,
-                    condition: analysisResult.condition_grade,
-                    description:
-                      analysisResult.resale_ad 
-                        ? analysisResult.resale_ad.replace(/\$\d+(\.\d+)?/g, option.estimatedValue) // Replace any price in the resale ad
-                        : `Selling a ${itemName} in ${analysisResult.condition_grade.toLowerCase()} condition. ${
-                            analysisResult.damage_severity !== "no damage"
-                              ? `Has ${analysisResult.damage_severity}.`
-                              : "No damage."
-                          } Asking ${option.estimatedValue}. Original price was ${originalPrice}.`,
-                    timeToSell: option.timeToSell,
-                    fees: option.fees,
-                    image: uploadedImages && uploadedImages.length > 0 ? uploadedImages[0] : null,
-                  }
-                  localStorage.setItem("facebookListingData", JSON.stringify(listingData))
-                  router.push("/facebook-demo")
-                }}
+                    // Create a clean description without price mentions
+                    let cleanDescription = ""
+
+                    if (analysisResult.resale_ad) {
+                      // Clean the resale ad of any price references
+                      cleanDescription = analysisResult.resale_ad
+                        .replace(/\$\d+(\.\d+)?/g, "") // Remove prices with $ sign
+                        .replace(/\b\d+\.\d+\b/g, "") // Remove decimal numbers without $ sign
+                        .replace(/asking price is.*?\.(\s|$)/i, "") // Remove "asking price is..." phrases
+                        .replace(/price:.*?\.(\s|$)/i, "") // Remove "Price:..." phrases
+                        .replace(/\s{2,}/g, " ") // Replace multiple spaces with a single space
+                        .trim() // Trim extra spaces
+                    } else {
+                      // Create a description without price mentions
+                      cleanDescription = `Selling a ${itemName} in ${analysisResult.condition_grade.toLowerCase()} condition. ${
+                        analysisResult.damage_severity !== "no damage"
+                          ? `Has ${analysisResult.damage_severity}.`
+                          : "No damage."
+                      } Pick up only.`
+                    }
+
+                    // Get the image from uploaded images
+                    const imageToUse = uploadedImages && uploadedImages.length > 0 ? uploadedImages[0] : null
+                    console.log("Using user-uploaded image for Facebook listing:", imageToUse ? "Image found" : "No image")
+
+                    // Store the listing data in localStorage
+                    const listingData = {
+                      title: `${analysisResult.condition_grade} ${itemName} for Sale`,
+                      price: option.estimatedValue,
+                      condition: analysisResult.condition_grade,
+                      description: cleanDescription,
+                      timeToSell: option.timeToSell,
+                      fees: option.fees,
+                      image: imageToUse,
+                    }
+                    
+                    try {
+                      localStorage.setItem("facebookListingData", JSON.stringify(listingData))
+                      console.log("Successfully stored listing data in localStorage")
+                    } catch (error) {
+                      console.error("Error storing listing data in localStorage:", error)
+                    }
+                    
+                    router.push("/facebook-demo")
+                  }}
                   className="flex items-center justify-center w-full py-2 px-4 bg-[#f3f3f3] hover:bg-[#e5e5e5] rounded-md text-sm font-medium transition-colors"
                 >
                   Post on {option.name} <ExternalLink className="ml-2 h-4 w-4" />
@@ -203,5 +225,4 @@ export function MarketplaceOptions({
     </div>
   )
 }
-
 

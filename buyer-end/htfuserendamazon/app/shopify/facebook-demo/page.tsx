@@ -36,7 +36,19 @@ export default function ShopifyFacebookDemoPage() {
     if (typeof window !== "undefined") {
       const storedData = localStorage.getItem("facebookListingData")
       if (storedData) {
-        setListingData(JSON.parse(storedData))
+        try {
+          const parsedData = JSON.parse(storedData)
+
+          // Ensure the description mentions the correct price
+          if (parsedData.description && parsedData.price) {
+            // Replace any price mentions with the correct price
+            parsedData.description = parsedData.description.replace(/\$\d+(\.\d+)?/g, parsedData.price)
+          }
+
+          setListingData(parsedData)
+        } catch (e) {
+          console.error("Error parsing listing data:", e)
+        }
       }
     }
 
@@ -181,11 +193,19 @@ export default function ShopifyFacebookDemoPage() {
             </div>
 
             <div className="mb-4">
-              <img
-                src={listingData.image || "/placeholder.svg?height=300&width=400"}
-                alt={listingData.title}
-                className="w-full max-h-96 object-contain bg-gray-100 rounded-md"
-              />
+              {listingData.image ? (
+                <img
+                  src={listingData.image || "/placeholder.svg"}
+                  alt={listingData.title}
+                  className="w-full max-h-96 object-contain bg-gray-100 rounded-md"
+                />
+              ) : (
+                <img
+                  src="/placeholder.svg?height=300&width=400"
+                  alt={listingData.title}
+                  className="w-full max-h-96 object-contain bg-gray-100 rounded-md"
+                />
+              )}
             </div>
 
             <div className="flex justify-between text-gray-500 border-t border-b border-gray-200 py-2 mb-3">
@@ -235,4 +255,5 @@ export default function ShopifyFacebookDemoPage() {
     </div>
   )
 }
+
 

@@ -7,7 +7,7 @@ import { OrderCard } from "./order-card"
 const orders = [
   {
     id: "1045-F1",
-    date: "May 15, 2025",
+    date: "May 15, 2023",
     status: "Fulfilled",
     total: "$229.98",
     items: [
@@ -34,7 +34,7 @@ const orders = [
   },
   {
     id: "1046-F2",
-    date: "April 28, 2025",
+    date: "April 28, 2023",
     status: "Fulfilled",
     total: "$89.95",
     items: [
@@ -61,7 +61,7 @@ const orders = [
   },
   {
     id: "1047-F3",
-    date: "April 10, 2025",
+    date: "April 10, 2023",
     status: "Fulfilled",
     total: "$349.99",
     items: [

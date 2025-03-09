@@ -15,11 +15,11 @@ interface ReturnItemsProps {
   analysisResult: JudgmentResult | null
 }
 
-// Updated order dates for 2025
+// Sample order dates - in a real app, these would come from the API
 const orderDates: Record<string, string> = {
-  "1045-F1": "March 4, 2025",
-  "1046-F2": "February 13, 2025",
-  "1047-F3": "January 8, 2025",
+  "1045-F1": "May 15, 2023",
+  "1046-F2": "April 28, 2023",
+  "1047-F3": "April 10, 2023",
 }
 
 export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: ReturnItemsProps) {
@@ -78,9 +78,9 @@ export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: Re
     <div className="space-y-6">
       {Object.entries(itemsByOrder).map(([orderId, items]) => (
         <div key={orderId} className="bg-white border border-gray-200 rounded-lg shadow-sm">
-          <div className="p-4 border-b border-gray-200 bg-[#f3f3f3]">
+          <div className="p-4 border-b border-gray-200">
             <div className="flex items-center text-sm text-gray-600">
-              <CheckCircle2 className="h-5 w-5 text-[#f90] mr-2" />
+              <CheckCircle2 className="h-5 w-5 text-green-600 mr-2" />
               <div>
                 <span className="font-medium">Order #{orderId}</span>
                 <div className="text-xs text-gray-500 mt-0.5">Ordered on {orderDates[orderId] || "Unknown date"}</div>
@@ -105,12 +105,10 @@ export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: Re
                   />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-medium text-[#0066c0] hover:text-[#c45500] hover:underline cursor-pointer">
-                        {item.name}
-                      </h3>
+                      <h3 className="font-medium">{item.name}</h3>
                       <button
                         onClick={() => toggleItemDescription(item.id)}
-                        className="text-xs text-[#0066c0] hover:text-[#c45500] hover:underline flex items-center"
+                        className="text-xs text-gray-500 hover:text-gray-700 flex items-center"
                       >
                         Item details
                         {expandedItemId === item.id ? (
