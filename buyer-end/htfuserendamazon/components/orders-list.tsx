@@ -7,16 +7,16 @@ import { OrderCard } from "./order-card"
 const orders = [
   {
     id: "1045-F1",
-    date: "May 15, 2023",
+    date: "March 4, 2025",
     status: "Fulfilled",
-    total: "$229.98",
+    total: "$129.98",
     items: [
       {
         id: 1,
         name: "Wireless Bluetooth Headphones",
         price: "$79.99",
         quantity: 1,
-        image: "/placeholder.svg?height=60&width=60",
+        image: "https://m.media-amazon.com/images/I/41lArSiD5hL.jpg",
         description:
           "Premium wireless headphones with active noise cancellation, 30-hour battery life, and comfortable over-ear design. Features Bluetooth 5.0 connectivity, built-in microphone for calls, and touch controls for easy operation. Includes carrying case, charging cable, and 3.5mm audio cable.",
       },
@@ -25,7 +25,7 @@ const orders = [
         name: "Classic White Shirt - Medium",
         price: "$49.99",
         quantity: 1,
-        image: "/placeholder.svg?height=60&width=60",
+        image: "https://www.santaeulalia.com/cdn/shop/products/8c57dc62db191f55f2460007092b2cda_48772894-d01d-45f7-b8bc-8d4304e9eb2b.jpg?v=1706776454",
         description:
           "Premium cotton white shirt with button-down collar. Classic fit, machine washable. 100% cotton material, perfect for business or casual wear. Features reinforced stitching and durable buttons.",
       },
@@ -34,7 +34,7 @@ const orders = [
   },
   {
     id: "1046-F2",
-    date: "April 28, 2023",
+    date: "February 13, 2025",
     status: "Fulfilled",
     total: "$89.95",
     items: [
@@ -61,7 +61,7 @@ const orders = [
   },
   {
     id: "1047-F3",
-    date: "April 10, 2023",
+    date: "January 8, 2025",
     status: "Fulfilled",
     total: "$349.99",
     items: [
