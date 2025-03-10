@@ -156,7 +156,7 @@ export function ReturnItems({ orderNumber, shippingAddress, analysisResult }: Re
 
       <ReturnComments />
 
-      {analysisResult && (
+      {!analysisResult && (
         <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">Select a return reason</label>
           <select
