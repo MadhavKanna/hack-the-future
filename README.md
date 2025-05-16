@@ -1,10 +1,8 @@
 Made by Andrey Kobyakov and Madhav Kanna Thenappan for Hack the Future 2025. 
 
+# Kintsugi Seller Side Application + Buyer Side Application
 
-
-# Seller Side Application
-
-This is the seller-side application for managing returns, resales, and analytics. It provides a centralized dashboard for sellers to view transactions, returns, trends, and more.
+This a repository containing both seller-side application for managing returns, resales, and analytics and buyer side integration example with Amazon. It provides a centralized dashboard for sellers to view transactions, returns, trends, and more, and a view of how a retailer chain could easily integrate our solutions.
 
 ---
 
