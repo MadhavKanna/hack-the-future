@@ -1,4 +1,4 @@
-Made by Andrey Kobyakov and Madhav Kanna Thenappan for Hack the Future 2025. 
+Made by Andrey Kobyakov and Madhav Kanna Thenappan for Hack the Future 2025. - 🎉🎉Won Runner up @ HackTheFuture2025🎉🎉
 - [Demo Presentation Video Link](https://drive.google.com/file/d/1ZVNZTDRb_f3XrzcwdsqXzPmRRX8u_VdO/view?usp=sharing)
 - [Demo Slides Link](https://www.canva.com/design/DAGhS2-ZKz0/BdxS43-hWJc0jjwj6J28yQ/view?utlId=hfffeec5511&continue_in_browser=true#1)
 # Kintsugi Seller Side Application + Buyer Side Application
